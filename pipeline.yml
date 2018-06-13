@@ -1,0 +1,79 @@
+resource_types:
+- name: email-resource
+  type: docker-image
+  source:
+    repository: aemengo/email-resource
+
+- name: google-cloud-storage
+  type: docker-image
+  source:
+    repository: frodenas/gcs-resource
+
+resources:
+- name: gcs-bucket
+  type: google-cloud-storage
+  source: ((gcp_bucket_creds))
+
+- name: postgres-repo
+  type: git
+  source:
+    branch: master
+    uri: git://git.postgresql.org/git/postgresql.git
+
+- name: patches
+  type: email-resource
+  source: ((email_creds))
+
+- name: postgres-patch-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/greenplum-db/postgres-patch-ci.git
+
+jobs:
+- name: apply-patches
+  public: true
+  plan:
+  - get: postgres-repo
+  - get: postgres-patch-ci
+  - get: patches
+    trigger: true
+    params:
+      attachment_filter: "\\.(patch|diff)$"
+  - task: apply
+    file: postgres-patch-ci/tasks/apply-patches/task.yml
+    on_failure:
+      task: alert-failure
+      file: postgres-patch-ci/tasks/alert-slack-for-patch/task.yml
+      params:
+        TITLE: "The following patch failed to apply"
+        COLOR: "#D00000" #red
+        SLACK_URLS: ((slack_urls))
+  - put: gcs-bucket
+    params:
+      file: artifacts/postgres-repo.tgz
+
+- name: run-tests
+  public: true
+  plan:
+  - get: postgres-patch-ci
+  - get: postgres-repo-tarball
+    resource: gcs-bucket
+    passed: [ apply-patches ]
+    trigger: true
+  - task: tests
+    file: postgres-patch-ci/tasks/run-tests/task.yml
+  on_success:
+    task: alert-success
+    file: postgres-patch-ci/tasks/alert-slack/task.yml
+    params:
+      TITLE: "Tests succeeded on the following patch"
+      COLOR: "#00D000" #green
+      SLACK_URLS: ((slack_urls))
+  on_failure:
+    task: alert-failure
+    file: postgres-patch-ci/tasks/alert-slack/task.yml
+    params:
+      TITLE: "Tests failed on the following patch"
+      COLOR: "#D00000" #red
+      SLACK_URLS: ((slack_urls))
