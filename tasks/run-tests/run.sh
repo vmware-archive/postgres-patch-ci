@@ -3,7 +3,7 @@
 set -xe
 
 apt update
-apt install sudo build-essential libreadline-dev zlib1g-dev bison flex
+apt install sudo build-essential libreadline-dev zlib1g-dev bison flex -y
 
 pushd postgres-repo-tarball
     tar xvf *.tgz
