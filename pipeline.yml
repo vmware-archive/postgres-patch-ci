@@ -48,7 +48,7 @@ jobs:
   - get: patches
     trigger: true
     params:
-      attachment_filter: "\\.(patch|diff)$"
+      attachment_filter: "\\.(pa?t?c?h|di?f?f)$"
   - task: apply
     file: postgres-patch-ci/tasks/apply-patch/task.yml
     on_failure:
