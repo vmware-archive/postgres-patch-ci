@@ -41,7 +41,7 @@ jobs:
     params:
       attachment_filter: "\\.(patch|diff)$"
   - task: apply
-    file: postgres-patch-ci/tasks/apply-patches/task.yml
+    file: postgres-patch-ci/tasks/apply-patch/task.yml
     on_failure:
       task: alert-failure
       file: postgres-patch-ci/tasks/alert-slack-for-patch/task.yml

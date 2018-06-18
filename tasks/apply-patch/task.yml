@@ -9,9 +9,9 @@ image_resource:
 outputs:
 - name: artifacts
 inputs:
-- name: pgadmin-repo
+- name: postgres-repo
 - name: patches
-- name: pgadmin-ci
+- name: postgres-patch-ci
 
 run:
-  path: pgadmin-ci/tasks/apply-patches/run.sh
+  path: postgres-patch-ci/tasks/apply-patch/run.sh

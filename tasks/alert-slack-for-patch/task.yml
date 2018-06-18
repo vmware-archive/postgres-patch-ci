@@ -11,4 +11,4 @@ inputs:
 - name: build
 
 run:
-  path: pgadmin-ci/tasks/alert-slack-for-patch/run.sh
+  path: postgres-patch-ci/tasks/alert-slack-for-patch/run.sh
