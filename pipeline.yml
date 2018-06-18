@@ -9,6 +9,11 @@ resource_types:
   source:
     repository: frodenas/gcs-resource
 
+- name: build-metadata-resource
+  type: docker-image
+  source:
+    repository: aemengo/build-metadata-resource
+
 resources:
 - name: gcs-bucket
   type: google-cloud-storage
@@ -30,12 +35,16 @@ resources:
     branch: master
     uri: https://github.com/greenplum-db/postgres-patch-ci.git
 
+- name: build-metadata
+  type: build-metadata-resource
+
 jobs:
 - name: apply-patches
   public: true
   plan:
   - get: postgres-repo
   - get: postgres-patch-ci
+  - get: build-metadata
   - get: patches
     trigger: true
     params:
@@ -57,6 +66,7 @@ jobs:
   public: true
   plan:
   - get: postgres-patch-ci
+  - get: build-metadata
   - get: postgres-repo-tarball
     resource: gcs-bucket
     passed: [ apply-patches ]

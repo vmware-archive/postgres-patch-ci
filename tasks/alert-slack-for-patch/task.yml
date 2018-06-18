@@ -8,6 +8,7 @@ image_resource:
 inputs:
 - name: patches
 - name: postgres-patch-ci
+- name: build-metadata
 
 run:
   path: postgres-patch-ci/tasks/alert-slack-for-patch/run.sh

@@ -2,7 +2,7 @@
 
 set -e
 
-title_link=$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME
+title_link=$(cat build-metadata/build-url)
 body=$(cat patches/body)
 text="*$(cat patches/from) - $(cat patches/subject)*\n$(echo ${body} | cut -c 1-150)...\n$(cd patches/attachments && ls )"
 payload=$(cat <<EOF
