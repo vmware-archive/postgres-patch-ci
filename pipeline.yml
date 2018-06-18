@@ -75,14 +75,14 @@ jobs:
     file: postgres-patch-ci/tasks/run-tests/task.yml
   on_success:
     task: alert-success
-    file: postgres-patch-ci/tasks/alert-slack-for-patch/task.yml
+    file: postgres-patch-ci/tasks/alert-slack/task.yml
     params:
       TITLE: "Tests succeeded on the following patch"
       COLOR: "#00D000" #green
       SLACK_URLS: ((slack_urls))
   on_failure:
     task: alert-failure
-    file: postgres-patch-ci/tasks/alert-slack-for-patch/task.yml
+    file: postgres-patch-ci/tasks/alert-slack/task.yml
     params:
       TITLE: "Tests failed on the following patch"
       COLOR: "#D00000" #red
