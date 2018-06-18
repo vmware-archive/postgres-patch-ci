@@ -4,6 +4,9 @@ set -e
 
 dir=$PWD
 
+apt update
+apt install git -y
+
 pushd postgres-repo > /dev/null
   oldSHA=$(git rev-parse HEAD)
 
